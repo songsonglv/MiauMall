@@ -1,0 +1,20 @@
+//
+//  NSData+AES256.h
+//  MiauMall
+//
+//  Created by 吕松松 on 2022/12/14.
+//
+
+#import <Foundation/Foundation.h>
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface NSData (AES256)
+-(NSData *) aes256_encrypt:(NSString*)key;//  加密
+-(NSData *) aes256_decrypt:(NSString *)key;//  解密
+
+@end
+
+NS_ASSUME_NONNULL_END

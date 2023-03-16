@@ -1,0 +1,12 @@
+//
+//  MMZhongCaoListModel.m
+//  MiauMall
+//
+//  Created by 吕松松 on 2023/3/2.
+//
+
+#import "MMZhongCaoListModel.h"
+
+@implementation MMZhongCaoListModel
+
+@end

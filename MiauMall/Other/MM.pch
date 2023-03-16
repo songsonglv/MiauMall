@@ -1,0 +1,177 @@
+//
+//  MM.pch
+//  MiauMall
+//
+//  Created by 吕松松 on 2022/12/5.
+//
+
+#ifndef MM_pch
+#define MM_pch
+
+#import "Header.h"
+
+//服务器地址 app公用一个url 方法用t区分 下发
+//
+//新框架
+// https://miaumall2022.azurewebsites.net/unishop/Face.ashx
+//aws
+//https://aws.miaujp.com/unishop/Face.ashx
+//旧框架
+//"https://app.miau2020.com/unishop/Face.ashx"
+                 
+#define BaseUrl1 "https://miaumall2022.azurewebsites.net/unishop/Face.ashx"
+#define baseurl "https://www.app.miau2020.com/unishop/Face.ashx"
+//"https://miaumall2022.azurewebsites.net/unishop/Face.ashx"
+//http://api.miaujp.com:6002/unishop/Face.ashx
+//线上 https://app.miau2020.com/unishop/Face.ashx
+//测试 http://13.215.245.217:5000/unishop/Face.ashx
+#define BaseUrl "https://app.miau2020.com/unishop/Face.ashx"//传文件是用这个
+//新框架 https://miaumall2022.azurewebsites.net/unishop/Face.ashx
+//"https://api.aitmo.com/antrebateapp"//最新
+//"https://aitni.com/antrebateapp/" //正式服
+//"https://aitpay.cn/antrebateapp/" //测试服
+
+#define APPID "1562454331"
+#define TALKINGAPPID "D525C71020C3410DA54AC37CC50C5D73"//统计sdkid
+#define TPAccessID "1620010648" //腾讯云accessid
+#define TPAccessKey "INXBF6P9TYWY"
+#define TPSecretKey "993436e0b052820cca4bdc80b28b1398"
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+//读取多国语言
+#define LocalizedString(key)  [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"appLanguage"]] ofType:@"lproj"]] localizedStringForKey:(key) value:nil table:@"Language"]
+
+
+//Color
+#define TCUIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue &0xFF00) >>8))/255.0 blue:((float)(rgbValue &0xFF))/255.0 alpha:1.0]
+
+#define rgb(r,g,b) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:1.0f]
+#define rgba(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
+//背景颜色
+#define bgColor TCUIColorFromRGB(0xf8f8f8)
+
+//常用颜色
+//红色1
+#define redColor1 TCUIColorFromRGB(0xe72423)
+//红色2
+#define redColor2 TCUIColorFromRGB(0xe13925)
+
+//绿色1
+#define greenColor1 TCUIColorFromRGB(0x5dbf03)
+//字体黑色
+#define textBlackColor TCUIColorFromRGB(0x2c2c2c)
+//字体黑色2
+#define textBlackColor2 TCUIColorFromRGB(0x464342)
+//字体黑色3
+#define textBlackColor3 TCUIColorFromRGB(0x231815)
+//分割线
+#define lineColor TCUIColorFromRGB(0xeef0f1)
+
+//默认灰色
+#define normalColor TCUIColorFromRGB(0x6a6a6a6)
+
+//选中颜色
+#define selectColor TCUIColorFromRGB(0xaa874f)
+
+#ifndef TPNS_DISPATCH_MAIN_SYNC_SAFE
+#define TPNS_DISPATCH_MAIN_SYNC_SAFE(block)              \
+    if ([NSThread isMainThread]) {                       \
+        block();                                         \
+    } else {                                             \
+        dispatch_sync(dispatch_get_main_queue(), block); \
+    }
+#endif
+
+//屏幕实际的宽高度
+#define WIDTH  [[UIScreen mainScreen] bounds].size.width //宽度
+#define HEIGHT  [[UIScreen mainScreen] bounds].size.height //高度
+
+//判断是否为刘海屏
+#define iPhoneX ((HEIGHT >736 ) ? YES : NO)
+
+// Status bar height.
+#define  StatusBarHeight      (iPhoneX ? 48 : 20)
+
+
+// Navigation bar height.
+#define  NavigationBarHeight  44.f
+
+//是否刘海屏
+#define kIsBangsScreen ({\
+    BOOL isBangsScreen = NO; \
+    if (@available(iOS 11.0, *)) { \
+    UIWindow *window = [[UIApplication sharedApplication].windows firstObject]; \
+    isBangsScreen = window.safeAreaInsets.bottom > 0; \
+    } \
+    isBangsScreen; \
+})
+
+
+//判断是否为空
+#define kArrayIsEmpty(array) ((array == nil || [array isKindOfClass:[NSNull class]] || array.count == 0) ? YES : NO)
+
+//获取当前语言
+#define LRCurrentLanguage ([[NSLocale preferredLanguages] objectAtIndex:0])
+
+//APP版本号
+#define kAppVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]
+
+#define kNotificationCenter [NSNotificationCenter defaultCenter] //通知中心
+
+// Tabbar height.
+#define  TabbarHeight         (iPhoneX ? (49.f+34.f) : 49.f)
+
+#define TabBarBottomMargin (iPhoneX ? 16.f : 0.f)
+
+// Tabbar safe bottom margin.
+#define  TabbarSafeBottomMargin         (iPhoneX ? 34.f : 0.f)
+
+// Status bar & navigation bar height.
+#define  StatusBarAndNavigationBarHeight  (iPhoneX ? 88.f : 64.f)
+
+#define ViewSafeAreInsets(view) ({UIEdgeInsets insets; if(@available(iOS 11.0, *)) {insets = view.safeAreaInsets;} else {insets = UIEdgeInsetsZero;} insets;})
+
+#define AdjustsScrollViewInsetNever(controller,view) if(@available(iOS 11.0, *)) {view.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;} else if([controller isKindOfClass:[UIViewController class]]) {controller.automaticallyAdjustsScrollViewInsets = false;}
+#define  adjustsScrollViewInsets_NO(scrollView,vc)\
+
+#define NSLog(...) NSLog(@"%s 第%d行 \n %@\n\n",__func__,__LINE__,[NSString stringWithFormat:__VA_ARGS__])
+//默认地址
+#define  UserDefaultsAddressPath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"address.archive"]
+
+//
+#define MemberInfoPath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"MemberInfo.archive"]
+
+//历史搜索路径
+#define HistoryGoodsSearchPath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"GoodsSearchhistories.plist"]
+
+
+//弱引用
+#define KweakSelf(type)  __weak typeof(type) weak##type = type;
+
+//强引用
+#define KstrongSelf(type)  __strong typeof(type) type = weak##type;
+
+NS_INLINE UIFont *kFONT (CGFloat font) {
+    return [UIFont systemFontOfSize:font];
+}
+
+//适配字体大小
+NS_INLINE CGFloat kFontSize(CGFloat size) {
+    return size / 375.0 * WIDTH;
+}
+
+//按宽比例度适配
+NS_INLINE CGFloat kReaValue(CGFloat with) {
+    return with  / 375.0 * WIDTH;
+}
+
+#define kAdapter(w) WIDTH / 750.0f * w
+
+#ifndef __OPTIMIZE__
+#define NSLog(...) NSLog(__VA_ARGS__)
+#else
+#define NSLog(...){}
+#endif 
+
+#endif /* MM_pch */

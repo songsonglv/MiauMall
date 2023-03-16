@@ -1,0 +1,15 @@
+{
+    "HControllers":[
+        {
+            "url":"pages/shop/list",
+            "iosclass":"MMGoodsListViewController",
+            "androidclass":""
+        },
+        {
+            "url":"page/shop/info",
+            "iosclasee":"MMHomeGoodsDetailController",
+            "androidclass":""
+        }
+        
+    ]
+}

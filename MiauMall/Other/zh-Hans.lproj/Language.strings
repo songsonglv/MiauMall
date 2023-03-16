@@ -1,0 +1,12 @@
+/* 
+  Language.strings
+  MiauMall
+
+  Created by 吕松松 on 2022/12/8.
+  
+*/
+CFBundleDisplayName = "国际化App名称";
+"首页"="首页";
+"中文"="中文";
+"英文"="英文";
+"日文"="日文";
