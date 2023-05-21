@@ -66,9 +66,9 @@
         layout.itemSize = CGSizeMake(wid, wid);
     }else if ([_isEnter isEqualToString:@"wish"]){
         layout.itemSize = CGSizeMake(81, 81);
-    }else if ([_isEnter isEqualToString:@"refund"]){
+    }else if ([_isEnter isEqualToString:@"refund"] || [_isEnter isEqualToString:@"hpjt"]){
         layout.itemSize = CGSizeMake(75, 75);
-    }else if ([_isEnter isEqualToString:@"assess"]){
+    }else if ([_isEnter isEqualToString:@"assess"] || [_isEnter isEqualToString:@"dm"]){
         layout.itemSize = CGSizeMake(92, 92);
     }else{
         layout.itemSize = CGSizeMake(100, 75);
@@ -77,6 +77,9 @@
 //    layout.minimumInteritemSpacing = 12;
 //    layout.minimumLineSpacing = 12;
     layout.sectionInset = UIEdgeInsetsMake(0,12,12, 0);
+    if([self.isEnter isEqualToString:@"dm"]){
+        layout.sectionInset = UIEdgeInsetsMake(12,10,0, 0);
+    }
     _collectionView = [[UICollectionView alloc]initWithFrame:self.bounds collectionViewLayout:layout];
     [_collectionView registerClass:[ACMediaImageCell class] forCellWithReuseIdentifier:NSStringFromClass([ACMediaImageCell class])];
     _collectionView.delegate = self;
@@ -99,6 +102,25 @@
     _backBlock = backBlock;
 }
 
+-(void)setPingUploadUrlString:(NSString *)pingUploadUrlString{
+    _pingUploadUrlString = pingUploadUrlString;
+    ACMediaModel *model = [[ACMediaModel alloc]init];
+    model.image = [self getImageFromURL:_pingUploadUrlString];
+    [self.mediaArray addObject:model];
+}
+
+-(UIImage *) getImageFromURL:(NSString *)fileURL {
+
+    UIImage*result;
+
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
+
+    result = [UIImage imageWithData:data];
+
+    return result;
+
+}
+
 + (CGFloat)defaultViewHeight {
     return 104;
 }
@@ -116,7 +138,13 @@
     } else if (self.isfeed == YES) { //照片
         if (_mediaArray.count == 6) {
             return 6;
-        } else {
+        }else if ([self.isEnter isEqualToString:@"hpjt"]){
+            if (_mediaArray.count == 3) {
+                return 3;
+            }else{
+                return _mediaArray.count + 1;
+            }
+        }else {
             return _mediaArray.count + 1;
         }
     } else {
@@ -135,12 +163,21 @@
         }else if([self.isEnter isEqualToString:@"wish"]){
             cell.icon.image = [UIImage imageNamed:@"upload_pic_icon"];
             cell.isComment = @"0";
-        }else if([self.isEnter isEqualToString:@"refund"]){
+        }else if([self.isEnter isEqualToString:@"refund"] ){
             cell.icon.image = [UIImage imageNamed:@"upload_new_icon"];
             cell.isComment = @"2";
         }else if ([self.isEnter isEqualToString:@"assess"]){
             cell.icon.image = [UIImage imageNamed:@"upload_six_icon"];
             cell.isComment = @"3";
+        }else if ( [self.isEnter isEqualToString:@"hpjt"]){
+            cell.icon.image = [UIImage imageNamed:@"upload_new_icon"];
+            cell.isComment = @"4";
+        }else if ([self.isEnter isEqualToString:@"dm"]){
+            cell.icon.image = [UIImage imageNamed:@"upload_new_icon"];
+            cell.isComment = @"5";
+//            if(self.pingUploadUrlString){
+//                [cell.icon sd_setImageWithURL:[NSURL URLWithString:self.pingUploadUrlString]];
+//            }
         }
         cell.videoImageView.hidden = YES;
         cell.deleteButton.hidden = YES;
@@ -174,11 +211,25 @@
         }
     } else {
         if (self.isfeed == YES) {
-            if (indexPath.row == _mediaArray.count && _mediaArray.count >= 6) {
-                [UIAlertController showAlertWithTitle:@"最多只能选择6张" message:nil actionTitles:@[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert completion:nil];
-                return;
+            if([self.isEnter isEqualToString:@"hpjt"]){
+                if (indexPath.row == _mediaArray.count && _mediaArray.count >= 3) {
+                    [UIAlertController showAlertWithTitle:@"最多只能选择3张" message:nil actionTitles:@[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert completion:nil];
+                    return;
+                }
+            }else if ([self.isEnter isEqualToString:@"dm"]){
+                if (indexPath.row == _mediaArray.count && _mediaArray.count >= 1) {
+                    [UIAlertController showAlertWithTitle:@"最多只能选择1张" message:nil actionTitles:@[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert completion:nil];
+                    return;
+                }
+            }else{
+                if (indexPath.row == _mediaArray.count && _mediaArray.count >= 6) {
+                    [UIAlertController showAlertWithTitle:@"最多只能选择6张" message:nil actionTitles:@[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert completion:nil];
+                    return;
+                }
             }
+            
         } else {
+        
             if (indexPath.row == _mediaArray.count && _mediaArray.count >= 9) {
                 [UIAlertController showAlertWithTitle:@"最多只能选择9张" message:nil actionTitles:@[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert completion:nil];
                 return;
@@ -241,8 +292,10 @@
             TZImagePickerController *imagePickerVc;
             if (self.isfeed == YES) {
                 
-                if([self.isEnter isEqualToString:@"wish"]){
+                if([self.isEnter isEqualToString:@"wish"] || [self.isEnter isEqualToString:@"dm"]){
                     imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 - _mediaArray.count delegate:self];
+                }else if ([self.isEnter isEqualToString:@"hpjt"]){
+                    imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:3 - _mediaArray.count delegate:self];
                 }else{
                     imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:6 - _mediaArray.count delegate:self];
                 }
@@ -355,6 +408,10 @@
         if(_mediaArray.count == 6){
             _collectionView.height = 196;
         }
+    }else if ([self.isEnter isEqualToString:@"hpjt"]){
+        _collectionView.height = 74;
+    }else if ([self.isEnter isEqualToString:@"dm"]){
+        _collectionView.height = 104;
     }
     
     
@@ -374,7 +431,10 @@
     if (self.isfeed == YES) {
         if([self.isEnter isEqualToString:@"wish"]){
             imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 - _mediaArray.count delegate:self];
-        }else{
+        }else if ([self.isEnter isEqualToString:@"hpjt"]){
+            imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:3 - _mediaArray.count delegate:self];
+        }
+        else{
             imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:6 - _mediaArray.count delegate:self];
         }
         

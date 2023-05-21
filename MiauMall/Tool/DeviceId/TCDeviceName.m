@@ -50,7 +50,20 @@
     if([deviceString isEqualToString:@"iPhone12,1"])return@"iPhone 11";
     if([deviceString isEqualToString:@"iPhone12,3"])return@"iPhone 11 Pro Max";
     if([deviceString isEqualToString:@"iPhone12,5"])return@"iPhone 11 Pro";
-
+    if ([deviceString isEqualToString:@"iPhone12,8"]) return @"iPhone SE(2nd generation)";
+        if ([deviceString isEqualToString:@"iPhone13,1"]) return @"iPhone 12 mini";
+        if ([deviceString isEqualToString:@"iPhone13,2"]) return @"iPhone 12";
+        if ([deviceString isEqualToString:@"iPhone13,3"]) return @"iPhone 12 Pro";
+        if ([deviceString isEqualToString:@"iPhone13,4"]) return @"iPhone 12 Pro Max";
+        if ([deviceString isEqualToString:@"iPhone14,4"]) return @"iPhone 13 mini";
+        if ([deviceString isEqualToString:@"iPhone14,5"]) return @"iPhone 13";
+        if ([deviceString isEqualToString:@"iPhone14,2"]) return @"iPhone 13 Pro";
+        if ([deviceString isEqualToString:@"iPhone14,3"]) return @"iPhone 13 Pro Max";
+        if ([deviceString isEqualToString:@"iPhone14,6"]) return @"iPhone SE (3rd generation)";
+        if ([deviceString isEqualToString:@"iPhone14,7"]) return @"iPhone 14";
+        if ([deviceString isEqualToString:@"iPhone14,8"]) return @"iPhone 14 Plus";
+        if ([deviceString isEqualToString:@"iPhone15,2"]) return @"iPhone 14 Pro";
+        if ([deviceString isEqualToString:@"iPhone15,3"]) return @"iPhone 14 Pro Max";
 
     
     return  deviceString;

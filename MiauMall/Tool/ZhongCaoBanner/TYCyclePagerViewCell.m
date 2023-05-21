@@ -68,6 +68,7 @@
     [self.imageView sd_setImageWithURL:[NSURL URLWithString:_model.Picture] placeholderImage:[UIImage imageNamed:@"zhanweic"]];
     self.label.text = _model.Name;
     
+    
 }
 
 @end

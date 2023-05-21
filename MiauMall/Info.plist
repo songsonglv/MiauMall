@@ -12,25 +12,85 @@
 				<string>miaumall-master</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>weixin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wx0ee23c892314f6f0</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.miau2020.apk</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.331442012709-1j16s996je2lhvc1ibeps062qcr8s9oi</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb753816059390757</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>talkingdata.ce5360f87d05442183d75b2cb240b974</string>
+			</array>
+		</dict>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>“MiauMall”将在设置头像时访问使用相机 需要您的同意</string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>&quot;MiauMall&quot;请求访问您的媒体资料库 需要您的同意</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>&quot;MiauMall&quot;将在设置头像时访问您的相册 需要您的同意</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>“MiauMall”为您添加图片 需要您的同意</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>&quot;MiauMall&quot;需要获取您设备的广告标识符，以为您提供更好的广告体验</string>
-	<key>UIUserInterfaceStyle</key>
-	<string>UIUserInterfaceStyleLight</string>
+	<key>FacebookAppID</key>
+	<string>753816059390757</string>
+	<key>FacebookClientToken</key>
+	<string>fd8d3503d42f47fec0c87391710bb24e</string>
+	<key>FacebookDisplayName</key>
+	<string>MiauMall</string>
+	<key>NSAllowsPasteboardOperation</key>
+	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>weixin</string>
+		<string>weixinULAPI</string>
+		<string>weixinURLParamsAPI</string>
+		<string>weixinulapi</string>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+		<string>lineauth2</string>
+	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

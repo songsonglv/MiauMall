@@ -38,7 +38,7 @@
 
 -(void)setUI{
     UIImageView *bgImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, -10, WIDTH, HEIGHT + 10)];
-    bgImage.image = [UIImage imageNamed:@"login_bg"];
+    [bgImage sd_setImageWithURL:[NSURL URLWithString:@"https://app.miau2020.com/down/appview/login.jpg"] placeholderImage:[UIImage imageNamed:@"login_bg"]];
     bgImage.userInteractionEnabled = YES;
     [self.view addSubview:bgImage];
     
@@ -47,14 +47,14 @@
     [returnBt addTarget:self action:@selector(clickBack) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:returnBt];
     
-    UILabel *lab1 = [UILabel publicLab:@"找回密码" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
+    UILabel *lab1 = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"zhPwd"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
     lab1.frame = CGRectMake(0, StatusBarHeight + 122, WIDTH, 26);
     [bgImage addSubview:lab1];
     
     UIView *infoView = [[UIView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(lab1.frame) + 30, WIDTH, 120)];
     [bgImage addSubview:infoView];
     
-    NSArray *arr = @[@"请输入手机号/邮箱账号",@"验证码"];
+    NSArray *arr = @[[UserDefaultLocationDic valueForKey:@"inputPhoneEmail"],[UserDefaultLocationDic valueForKey:@"verifyCode"]];
     for (int i = 0; i < 2; i++) {
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 60 * i, WIDTH, 60)];
         [infoView addSubview:view];
@@ -82,13 +82,13 @@
             field.frame = CGRectMake(35, 22, 150, 16);
             self.codeField = field;
             
-            UIButton *getCodeBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 134, 11, 110, 38)];
+            UIButton *getCodeBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 204, 11, 180, 38)];
             getCodeBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
             getCodeBt.layer.masksToBounds = YES;
             getCodeBt.layer.cornerRadius = 19;
             getCodeBt.layer.borderColor = TCUIColorFromRGB(0xffffff).CGColor;
             getCodeBt.layer.borderWidth = 1;
-            [getCodeBt setTitle:@"获取验证码" forState:(UIControlStateNormal)];
+            [getCodeBt setTitle:[UserDefaultLocationDic valueForKey:@"getCode"] forState:(UIControlStateNormal)];
             [getCodeBt addTarget:self action:@selector(clickGetCode:) forControlEvents:(UIControlEventTouchUpInside)];
             [getCodeBt setTitleColor:TCUIColorFromRGB(0xffffff) forState:(UIControlStateNormal)];
             [view addSubview:getCodeBt];
@@ -103,7 +103,7 @@
     [sureBt setBackgroundColor:TCUIColorFromRGB(0xffffff)];
     sureBt.userInteractionEnabled = NO;
     sureBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:16];
-    [sureBt setTitle:@"确定" forState:(UIControlStateNormal)];
+    [sureBt setTitle:[UserDefaultLocationDic valueForKey:@"idetermine"] forState:(UIControlStateNormal)];
     [sureBt setTitleColor:TCUIColorFromRGB(0x626261) forState:(UIControlStateNormal)];
     [sureBt addTarget:self action:@selector(clickSure) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:sureBt];
@@ -115,6 +115,7 @@
     [questionBt setTitle:@"收不到验证吗?" forState:(UIControlStateNormal)];
     [questionBt addTarget:self action:@selector(clickQuestion) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:questionBt];
+    questionBt.hidden = YES;
     
 }
 
@@ -148,13 +149,13 @@
 - (void)reduceTime:(NSTimer *)coderTimer{
     timeCount--;
     if (timeCount == 0) {
-        [self.getCodeBt setTitle:@"重新获取" forState:UIControlStateNormal];
+        [self.getCodeBt setTitle:[UserDefaultLocationDic valueForKey:@"reacquire"] forState:UIControlStateNormal];
         self.getCodeBt.userInteractionEnabled = YES;
         [self.getCodeBt addTarget:self action:@selector(clickGetCode:) forControlEvents:(UIControlEventTouchUpInside)];
         //停止定时器
         [timer invalidate];
     }else{
-        NSString *str = [NSString stringWithFormat:@"   %lus重新获取", (long)timeCount];
+        NSString *str = [NSString stringWithFormat:@"   %lus%@", (long)timeCount,[UserDefaultLocationDic valueForKey:@"reacquire"]];
         [self.getCodeBt setTitle:str forState:UIControlStateNormal];
         self.getCodeBt.userInteractionEnabled = NO;
     }
@@ -200,7 +201,7 @@
     [ZTNetworking FormPostRequestUrl:url RequestPatams:param ssuccess:^(NSString *jsonStr, NSDictionary *jsonDic) {
         NSString *code = [NSString stringWithFormat:@"%@",jsonDic[@"code"]];
         if([code isEqualToString:@"1"]){
-            [ZTProgressHUD showMessage:@"验证码已发送"];
+            [ZTProgressHUD showMessage:[UserDefaultLocationDic valueForKey:@"yzmSon"]];
         }else{
             [ZTProgressHUD showMessage:jsonDic[@"msg"]];
         }
@@ -233,6 +234,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    [ZTProgressHUD hide];
     [TalkingDataSDK onPageEnd:@"忘记密码页面"];
 }
 

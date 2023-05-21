@@ -15,31 +15,135 @@
 #import "MMNavigationController.h"
 #import <objc/runtime.h>
 #import "UIImage+LSSGImage.h"
+#import "MiauMall-Swift.h"
+#import "MMCustomerServiceVC.h"
+#import "MMLocalTransLation.h"
 
 #define SCREEN_HEIGHT [[UIScreen mainScreen] bounds].size.height
 #define SCREEN_WIDTH [[UIScreen mainScreen] bounds].size.width
 
 @interface MMTabbarController ()<UITabBarControllerDelegate>
-
+{
+    SignalRSwift *signalrSwift;
+}
+@property (nonatomic, strong) NSUserDefaults *userDefaults;
+@property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) NSString *memberToken;
+@property (nonatomic, strong) EBBannerView *ebbview;
 @end
 
 @implementation MMTabbarController
 
 -(void)viewDidLoad{
-    [self addChildVC:[MMHomePageVC new] title:@"首页" normalImageName:@"tabbar_home" selectedImageName:@"tabbar_home_selected" isRequiredNavController:YES];
+    KweakSelf(self);
     
-    [self addChildVC:[MMClassifyVC new] title:@"分类" normalImageName:@"tabbar_classify" selectedImageName:@"tabbar_classify_selected" isRequiredNavController:YES];
-    [self addChildVC:[MMStrollVC new] title:@"逛逛" normalImageName:@"tabbar_stroll" selectedImageName:@"tabbar_stroll_selected" isRequiredNavController:YES];
-    [self addChildVC:[MMShopCarVC new] title:@"购物车" normalImageName:@"tabbar_shopcar" selectedImageName:@"tabbar_shopcar_selected" isRequiredNavController:YES];
-    [self addChildVC:[MMMineVC new] title:@"我的" normalImageName:@"tabbar_mine" selectedImageName:@"tabbar_mine_selected" isRequiredNavController:YES];
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
+    self.userID = [self.userDefaults valueForKey:@"userID"];
+    self.memberToken = [self.userDefaults valueForKey:@"membertoken"];
+    
+//    NSDictionary *localTranslation  = [self.userDefaults valueForKey:@"LocalTranslation"];
+//    
+//    NSString *str1 = [localTranslation valueForKey:@"home"];
+//    NSString *str2 = [localTranslation valueForKey:@"classification"];
+//    NSString *str3 = [localTranslation valueForKey:@"shoping"];
+//    NSString *str4 = [localTranslation valueForKey:@"payCart"];
+//    NSString *str5 = [localTranslation valueForKey:@"my"];
+//    
+//    NSArray *titles = @[str1,str2,str3,str4,str5];
+//    
+//    NSLog(@"%@",);
+//    
+////    NSArray *items = self.tabBarController.tabBar.items;
+////
+////      for(int i =0; i<items.count;i++){
+////
+////           UITabBarItem*item = items[i];
+////
+////           item.title= titles[i];
+////
+////       }
+    
+    [self addChildVC:[MMHomePageVC new] title:[UserDefaultLocationDic valueForKey:@"home"]  normalImageName:@"tabbar_home" selectedImageName:@"tabbar_home_selected" isRequiredNavController:YES];
+    //classification
+    [self addChildVC:[MMClassifyVC new] title:[UserDefaultLocationDic valueForKey:@"classification"] normalImageName:@"tabbar_classify" selectedImageName:@"tabbar_classify_selected" isRequiredNavController:YES];
+    [self addChildVC:[MMStrollVC new] title:[UserDefaultLocationDic valueForKey:@"shoping"] normalImageName:@"tabbar_stroll" selectedImageName:@"tabbar_stroll_selected" isRequiredNavController:YES];
+    [self addChildVC:[MMShopCarVC new] title:[UserDefaultLocationDic valueForKey:@"payCart"] normalImageName:@"tabbar_shopcar" selectedImageName:@"tabbar_shopcar_selected" isRequiredNavController:YES];
+    [self addChildVC:[MMMineVC new] title:[UserDefaultLocationDic valueForKey:@"my"] normalImageName:@"tabbar_mine" selectedImageName:@"tabbar_mine_selected" isRequiredNavController:YES];
     
     
+    //打开signalR
+    signalrSwift=[[SignalRSwift alloc]init];
+    NSString *signalRString =@"https://lsto.miaujp.com/hub";
+    NSDictionary *headers = @{@"token" : @"xxxxxxx"};
+    NSString *name =@"test";
+    __weak __typeof(&*self)weakSelf = self;
+    [signalrSwift signalROpenWithUrl:signalRString headers:headers hubName:name blockfunc:^(NSString * _Nonnull message) {
+        [weakSelf receivePushMessage:message];
+    }];
+  
+   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestNoRead) name:@"becomeActive" object:nil];
     
     self.delegate = self;
     
     NSString *time = [self getCurrentTimes];
-    NSString *str1 = [time substringFromIndex:8];
+    NSString *strt1 = [time substringFromIndex:8];
+    
+    self.ebbview = [EBBannerView bannerWithBlock:^(EBBannerViewMaker *make) {
+        
+    }];
 
+}
+
+-(void)requestNoRead{
+    NSString *url = [NSString stringWithFormat:@"%s?t=%@",baseurl,@"GetKeFuNotice"];
+    NSDictionary *param = @{@"membertoken":self.memberToken};
+    [ZTNetworking FormPostRequestUrl:url RequestPatams:param ssuccess:^(NSString *jsonStr, NSDictionary *jsonDic) {
+        NSLog(@"%@",jsonDic);
+        NSData *jsonData = [jsonDic[@"Conts"] dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *error;
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&error];
+        if(dic){
+            NSString *str = dic[@"msg"][@"body"];
+           
+            [EBBannerView showWithContent:str];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerViewDidClick:) name:EBBannerViewDidClickNotification object:nil];
+        }
+        
+        
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
+}
+
+#pragma mark - Singlr获取数据
+- (void)receivePushMessage:(NSString *)pushMessage {
+    NSLog(@"%@",pushMessage);
+    
+    NSString * jsonString = pushMessage;
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&error];
+    NSLog(@"%@",dic);
+    
+    if(dic){
+        NSString *MemberID = [NSString stringWithFormat:@"%@",dic[@"MemberID"]];
+        if([MemberID isEqualToString:self.userID]){
+            [EBBannerView showWithContent:dic[@"KefuReply"]];
+            
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerViewDidClick:) name:EBBannerViewDidClickNotification object:nil];
+        }
+        
+    }
+    
+}
+
+-(void)bannerViewDidClick:(NSNotification*)noti{
+    [self.ebbview hide];
+    [self.userDefaults setValue:@"1" forKey:@"isXianshi"];
+    [self.userDefaults synchronize];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"goKeFu" object:nil];;
+    
 }
 
 + (instancetype)shareInstance {
@@ -195,7 +299,11 @@
     return [[JLRoutes globalRoutes] routeURL:url];
 }
 
-
+-(void)RouteJump:(NSString *)routers{
+    NSLog(@"跳转route为%@",routers);
+    MMBaseViewController *vc = [MMRouterJump jumpToRouters:routers];
+    [[self currentViewController].navigationController pushViewController:vc animated:YES];
+}
 
 
 

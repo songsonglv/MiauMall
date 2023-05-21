@@ -136,6 +136,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    [ZTProgressHUD hide];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 

@@ -51,7 +51,7 @@
         make.centerY.mas_equalTo(self);
         make.centerX.mas_equalTo(self);
         make.width.mas_equalTo(280);
-        make.height.mas_equalTo(16);
+        make.height.mas_equalTo(18);
     }];
     
     [self.line mas_makeConstraints:^(MASConstraintMaker *make) {

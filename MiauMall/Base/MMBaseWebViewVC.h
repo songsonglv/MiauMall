@@ -19,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *lang;//语言
 @property (nonatomic, strong) NSString *cry;//国家
 @property (nonatomic, strong) NSString *loadUrlStr;
+@property (nonatomic, strong) NSString *isEnter;//支付页面进来的
+@property (nonatomic, strong) NSString *isEnter1;
+@property (nonatomic, strong) NSString *orderID;//订单ID
 @end
 
 NS_ASSUME_NONNULL_END

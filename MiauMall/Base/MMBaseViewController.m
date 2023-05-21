@@ -6,33 +6,41 @@
 //
 
 #import "MMBaseViewController.h"
+#import "MMCustomerServiceVC.h"
 
 @interface MMBaseViewController ()
-
 @end
 
 @implementation MMBaseViewController
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-
      [self.navigationController setNavigationBarHidden:true animated:animated];
-
 }
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = TCUIColorFromRGB(0xffffff);
-    
     UITabBarController * root = self.tabBarController; // self当前的viewController
     UITabBarItem * tabBarItem = [UITabBarItem new];
-    if (root.tabBar.items.count > 3) {
+    UITabBarItem * tabBarItem1 = [UITabBarItem new];
+    if (root.tabBar.items.count > 4) {
         tabBarItem = root.tabBar.items[3];// 拿到需要设置角标的tabarItem
+        tabBarItem1 = root.tabBar.items[4];// 拿到需要设置角标的tabarItem
         self.cartabBarItem = tabBarItem;
+        self.minetabBarItem = tabBarItem1;
     }
     
-    // Do any additional setup after loading the view.
+    self.localTranslationDic = [[NSUserDefaults standardUserDefaults] valueForKey:@"LocalTranslation"];
+    
+    
+    
+    
 }
+
+
 
 /*
 #pragma mark - Navigation

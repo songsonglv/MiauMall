@@ -20,7 +20,14 @@
 #import "BRDatePickerView.h"
 #import "RZColorful.h"//富文本
 #import "TalkingDataSDK.h"//统计
+#import "WXApi.h" //微信api
+#import <AlipaySDK/AlipaySDK.h>
+#import <GTMAppAuth.h>
+#import <FBSDKCoreKit.h>
+#import <FBSDKLoginKit.h>
+#import <GoogleSignIn/GoogleSignIn.h>
 
+#import <EBBannerView.h>
 
 
 
@@ -44,6 +51,9 @@
 #import "NSString+Size.h"
 #import "NSString+MJExtension.h"
 #import "NSDate+MMCalendar.h"
+#import "MMLocalTransLation.h"
+#import "MMLocalTranslationData.h"
+#import "MMGetRequestParameters.h"
 
 
 #import "ZTProgressHUD.h"
@@ -64,6 +74,7 @@
 #import "MMSelectSKUPopView.h"//规格弹窗
 #import "CountDownLabel.h" //倒计时label
 #import "GKCycleScrollView.h" //堆叠式轮播图
+//#import "TXLiteAVSDK_Professional/TXLiteAVSDK.h"//腾讯云直播sdk
 
 
 
@@ -87,6 +98,7 @@
 #import "MMZhongCaoInfoItemModel.h" //种草详情itemmodel
 #import "MMHotListItemModel.h" //首页装修热销榜单model 新
 #import "MMZhongCaoBeforModel.h"
+#import "MMGoodsDetailGiftListModel.h" //商品详情moredata赠品列表数据model
 
 
 //全局用到的VC

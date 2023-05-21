@@ -9,6 +9,12 @@
 #import "BRStringPickerView.h"
 
 @interface MMRegistTwoVC ()<UITextFieldDelegate>
+@property (nonatomic, strong) NSUserDefaults *userDefaults;
+@property (nonatomic, strong) NSString *tempcart;//未登录用户使用此字段
+@property (nonatomic, strong) NSString *lang;//语言
+@property (nonatomic, strong) NSString *cry;//国家
+@property (nonatomic, strong) NSString *areaCode;
+@property (nonatomic, strong) UIView *phoneView;
 @property (nonatomic, strong) UITextField *invitationField;//邀请码
 @property (nonatomic, strong) UITextField *pwdField;//邀请码
 @property (nonatomic, strong) UITextField *againPwdField;//邀请码
@@ -30,7 +36,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isSelected = @"0";
-    
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
+    self.lang = [self.userDefaults valueForKey:@"language"];
+    self.tempcart = [self.userDefaults valueForKey:@"tempcart"];
+    self.cry = [self.userDefaults valueForKey:@"cry"];
+    self.areaCode = [self.userDefaults valueForKey:@"areaCode"];
     [self setUI];
     // Do any additional setup after loading the view.
 }
@@ -38,7 +48,7 @@
 
 -(void)setUI{
     UIImageView *bgImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, -10, WIDTH, HEIGHT + 10)];
-    bgImage.image = [UIImage imageNamed:@"login_bg"];
+    [bgImage sd_setImageWithURL:[NSURL URLWithString:@"https://app.miau2020.com/down/appview/login.jpg"] placeholderImage:[UIImage imageNamed:@"login_bg"]];
     bgImage.userInteractionEnabled = YES;
     [self.view addSubview:bgImage];
     
@@ -47,12 +57,12 @@
     [returnBt addTarget:self action:@selector(clickBack) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:returnBt];
     
-    UILabel *lab1 = [UILabel publicLab:@"填写注册信息" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
+    UILabel *lab1 = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"RegistXin"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
     lab1.frame = CGRectMake(0, StatusBarHeight + 122, WIDTH, 26);
     [bgImage addSubview:lab1];
     
-    NSArray *arr = @[@"邀请码",@"密码",@"密码",@"生日",@"性别"];
-    NSArray *arr1 = @[@"输入邀请码获得优惠券（非必填）",@"请输入密码",@"请输入确认密码",@"请选择生日（必填）",@"请选择性别"];
+    NSArray *arr = @[[UserDefaultLocationDic valueForKey:@"yqCode"],[UserDefaultLocationDic valueForKey:@"ipassword"],[UserDefaultLocationDic valueForKey:@"ipassword"],[UserDefaultLocationDic valueForKey:@"ibirthday"],[UserDefaultLocationDic valueForKey:@"igender"]];
+    NSArray *arr1 = @[[UserDefaultLocationDic valueForKey:@"noLimitCoupon"],[UserDefaultLocationDic valueForKey:@"inputPwd"],[UserDefaultLocationDic valueForKey:@"inputComPwd"],[UserDefaultLocationDic valueForKey:@"mustBirth"],[UserDefaultLocationDic valueForKey:@"igender"]];
     UIView *infoView = [[UIView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(lab1.frame) + 30, WIDTH, 300)];
     [bgImage addSubview:infoView];
     
@@ -60,11 +70,12 @@
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 60 * i, WIDTH, 60)];
         [infoView addSubview:view];
         
+        CGSize size = [NSString sizeWithText:[UserDefaultLocationDic valueForKey:@"ship48h"] font:[UIFont fontWithName:@"PingFangSC-Regular" size:14] maxSize:CGSizeMake(MAXFLOAT,14)];
         UILabel *lab = [UILabel publicLab:arr[i] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
-        lab.frame = CGRectMake(25, 22, 45, 15);
+        lab.frame = CGRectMake(25, 22, size.width, 15);
         [view addSubview:lab];
         
-        UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(100, 22, 185, 16)];
+        UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(CGRectGetMaxX(lab.frame) + 10, 22, 185, 16)];
         field.delegate = self;
         field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:arr1[i] attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
         field.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
@@ -128,21 +139,30 @@
     [sureBt setBackgroundColor:TCUIColorFromRGB(0xffffff)];
     sureBt.userInteractionEnabled = NO;
     sureBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:16];
-    [sureBt setTitle:@"完成" forState:(UIControlStateNormal)];
+    [sureBt setTitle:[UserDefaultLocationDic valueForKey:@"icomplete"] forState:(UIControlStateNormal)];
     [sureBt setTitleColor:TCUIColorFromRGB(0x626261) forState:(UIControlStateNormal)];
     [sureBt addTarget:self action:@selector(clickUpload) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:sureBt];
     self.uploadBt = sureBt;
     
     UILabel *textLabel = [UILabel publicLab:@"注册即代表您已同意我们的《用户协议》和《隐私政策》" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:11 numberOfLines:0];
-    textLabel.frame = CGRectMake((WIDTH - 300)/2, HEIGHT - 78, 280, 10);
+    textLabel.preferredMaxLayoutWidth = 300;
+    [textLabel setContentHuggingPriority:(UILayoutPriorityRequired) forAxis:(UILayoutConstraintAxisVertical)];
+    //textLabel.frame = CGRectMake((WIDTH - 300)/2, HEIGHT - 78, 280, 10);
     [bgImage addSubview:textLabel];
-    [textLabel rz_colorfulConfer:^(RZColorfulConferrer * _Nonnull confer) {
-        confer.text(@"注册即代表您已同意我们的").font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff));
-        confer.text(@"《用户协议》").font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff)).tapActionByLable(@"1");
-        confer.text(@"和").font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff));
-        confer.text(@"《隐私政策》").font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff)).tapActionByLable(@"2");
+    
+    [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo((WIDTH - 300)/2);
+            make.top.mas_equalTo(HEIGHT - 78);
+            make.width.mas_equalTo(300);
     }];
+    
+    [textLabel rz_colorfulConfer:^(RZColorfulConferrer * _Nonnull confer) {
+        confer.text([UserDefaultLocationDic valueForKey:@"loginAgree"]).font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff));
+        confer.text([UserDefaultLocationDic valueForKey:@"userAgree"]).font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff)).tapActionByLable(@"1");
+        confer.text([NSString stringWithFormat:@"《%@》",[UserDefaultLocationDic valueForKey:@"yinsizc"]]).font([UIFont fontWithName:@"PingFangSC-Regula" size:11]).textColor(TCUIColorFromRGB(0xffffff)).tapActionByLable(@"2");
+    }];
+
     
     [textLabel rz_tapAction:^(UILabel * _Nonnull label, NSString * _Nonnull tapActionId, NSRange range) {
         NSLog(@"%@",tapActionId);
@@ -198,14 +218,17 @@
 }
 
 -(void)selectBirthday{
+    [self.invitationField resignFirstResponder];
+    [self.pwdField resignFirstResponder];
+    [self.againPwdField resignFirstResponder];
     KweakSelf(self);
     // 1.创建日期选择器
     BRDatePickerView *datePickerView = [[BRDatePickerView alloc]init];
     // 2.设置属性
     datePickerView.pickerMode = BRDatePickerModeDate;
-    datePickerView.title = @"选择出生日期";
+    datePickerView.title = [UserDefaultLocationDic valueForKey:@"ibirthday"];
     datePickerView.pickerStyle.doneTextColor = selectColor;
-    datePickerView.pickerStyle.doneBtnTitle = @"确认";
+    datePickerView.pickerStyle.doneBtnTitle = [UserDefaultLocationDic valueForKey:@"iconfirm"];
     
     // datePickerView.selectValue = @"2019-10-30";
     datePickerView.selectDate = [NSDate br_setYear:2019 month:10 day:30];
@@ -229,12 +252,15 @@
 
 -(void)selectSex{
     KweakSelf(self);
+    [self.invitationField resignFirstResponder];
+    [self.pwdField resignFirstResponder];
+    [self.againPwdField resignFirstResponder];
     BRStringPickerView *stringPickerView = [[BRStringPickerView alloc]init];
     stringPickerView.pickerMode = BRStringPickerComponentSingle;
     stringPickerView.pickerStyle.doneTextColor = selectColor;
-    stringPickerView.pickerStyle.doneBtnTitle = @"确认";
-    stringPickerView.title = @"性别";
-    stringPickerView.dataSourceArr = @[@"男", @"女"];
+    stringPickerView.pickerStyle.doneBtnTitle = [UserDefaultLocationDic valueForKey:@"iconfirm"];
+    stringPickerView.title = [UserDefaultLocationDic valueForKey:@"igender"];
+    stringPickerView.dataSourceArr = @[[UserDefaultLocationDic valueForKey:@"imale"], [UserDefaultLocationDic valueForKey:@"ifemale"]];
     stringPickerView.selectIndex = 2;
     stringPickerView.resultModelBlock = ^(BRResultModel *resultModel) {
         weakself.sexField.text = resultModel.value;
@@ -263,24 +289,14 @@
     KweakSelf(self);
     NSString *sex;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *tempcart = [userDefaults valueForKey:@"tempcart"];
-    if(!tempcart){
-        NSString *str1 = [self generateTradeNO:8];
-        NSString *str2 = [self generateTradeNO:4];
-        NSString *str3 = [self generateTradeNO:4];
-        NSString *str4 = [self generateTradeNO:4];
-        NSString *str5 = [self generateTradeNO:12];
-        tempcart = [NSString stringWithFormat:@"%@-%@-%@-%@-%@",str1,str2,str3,str4,str5];
-        [userDefaults setValue:tempcart forKey:@"tempcart"];
-        [userDefaults  synchronize];
-    }
+   
     
-    if([self.sexField.text isEqualToString:@"男"]){
+    if([self.sexField.text isEqualToString:[userDefaults valueForKey:@"imale"]]){
         sex = @"1";
     }else{
         sex = @"2";
     }
-    NSDictionary *param = @{@"Sex":sex,@"Sex_Bind    ":self.sexField.text,@"RegCode":self.invitationField.text,@"AccountName":self.AccountName,@"AccountPassword":self.pwdField.text,@"AccountPassword1":self.againPwdField.text,@"Birth":self.birthdayField.text,@"Currency":@"0",@"type":@"1",@"AreaCode":@"86",@"tempcart":tempcart,@"RegSource":@"0",@"lang":@"0",@"cry":@"0"};
+    NSDictionary *param = @{@"Sex":sex,@"Sex_Bind    ":self.sexField.text,@"RegCode":self.invitationField.text,@"AccountName":self.AccountName,@"AccountPassword":self.pwdField.text,@"AccountPassword1":self.againPwdField.text,@"Birth":self.birthdayField.text,@"Currency":self.cry,@"type":@"1",@"AreaCode":self.areaCode,@"tempcart":self.tempcart,@"RegSource":@"0",@"lang":self.lang,@"cry":self.cry};
     NSString *url = [NSString stringWithFormat:@"%s?t=%@",baseurl,@"RegSub"];
     if([self.pwdField.text isEqualToString:self.againPwdField.text] ){
         if(self.pwdField.text.length >= 6){
@@ -291,7 +307,20 @@
                     [ZTProgressHUD showMessage:jsonDic[@"msg"]];
                     [userDefaults setValue:jsonDic[@"key"] forKey:@"membertoken"];
                     [userDefaults synchronize];
-                    [self.presentingViewController.presentingViewController dismissViewControllerAnimated:NO completion:nil];
+//                    TalkingDataProfile *talkprofile = [TalkingDataProfile createProfile];
+//                    talkprofile.type = TalkingDataProfileTypeRegistered;
+//                    if([weakself.sexField.text isEqualToString:[UserDefaultLocationDic valueForKey:@"imale"]]){
+//                        talkprofile.gender = TalkingDataGenderMale;
+//                    }else if ([weakself.sexField.text isEqualToString:[UserDefaultLocationDic valueForKey:@"ifemale"]]){
+//                        talkprofile.gender = TalkingDataGenderFemale;
+//                    }else{
+//                        talkprofile.gender = TalkingDataGenderUnknown;
+//                    }
+//                    talkprofile.name = weakself.AccountName;
+//
+//                    [TalkingDataSDK onRegister:jsonDic[@"key"] profile:talkprofile invitationCode:weakself.invitationField.text];
+                    [TalkingDataSDK onEvent:@"iOS-注册" parameters:@{@"membertoken":jsonDic[@"key"]}];
+                    [self.presentingViewController.presentingViewController.presentingViewController dismissViewControllerAnimated:NO completion:nil];
                 }else{
                     [ZTProgressHUD showMessage:jsonDic[@"msg"]];
                 }
@@ -299,11 +328,11 @@
                 NSLog(@"%@",error);
             }];
         }else{
-            [ZTProgressHUD showMessage:@"密码最低6位"];
+            [ZTProgressHUD showMessage:[userDefaults valueForKey:@"miniSixPass"]];
         }
         
     }else{
-        [ZTProgressHUD showMessage:@"两次密码输入不一致，请检查后重新输入"];
+        [ZTProgressHUD showMessage:[UserDefaultLocationDic valueForKey:@"diffPass"]];
     }
 }
 
@@ -342,6 +371,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    [ZTProgressHUD hide];
     [TalkingDataSDK onPageEnd:@"注册第二步"];
 }
 

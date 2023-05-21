@@ -16,7 +16,10 @@ static JLRoutesManager * _manager = nil;
     dispatch_once(&predicate, ^{
         _manager = [self globalRoutes];
         _manager.routeNamesDictionary = [self readSimpleNamesJSON];
-        _manager.routeClassNameMap = [self readClassMapJSON];
+        
+       
+        
+//        _manager.routeClassNameMap = [self readClassMapJSON];
     });
     return _manager;
 }
@@ -36,20 +39,22 @@ static JLRoutesManager * _manager = nil;
     }
 }
 
+
+
 // 读取路由与类名对照表
-+ (NSDictionary *)readClassMapJSON{
-    NSString * path = [[NSBundle mainBundle] pathForResource:@"router_class_common_map" ofType:@"json"];
-    NSData * data = [NSData dataWithContentsOfFile:path];
-    NSError *error;
-    NSDictionary * jsonObj = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-    
-    if (!data || error) {
-        //DLog(@"JSON解码失败");
-        return nil;
-    } else {
-        return jsonObj;
-    }
-}
+//+ (NSDictionary *)readClassMapJSON{
+//    NSString * path = [[NSBundle mainBundle] pathForResource:@"router_class_common_map" ofType:@"json"];
+//    NSData * data = [NSData dataWithContentsOfFile:path];
+//    NSError *error;
+//    NSDictionary * jsonObj = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+//
+//    if (!data || error) {
+//        //DLog(@"JSON解码失败");
+//        return nil;
+//    } else {
+//        return jsonObj;
+//    }
+//}
 
 - (void)addRoutes:(NSArray *)routePatterns{
     for (NSString * route in routePatterns) {

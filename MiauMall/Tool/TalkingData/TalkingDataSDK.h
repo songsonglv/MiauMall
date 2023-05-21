@@ -7,6 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IOS
+#import <WebKit/WebKit.h>
+#endif
 
 
 typedef NS_OPTIONS(NSUInteger, TalkingDataDisable) {
@@ -240,6 +243,12 @@ typedef NS_ENUM(NSUInteger, TalkingDataGender) {
  */
 + (void)getShortUrl:(NSDictionary *)params callback:(void (^)(NSString *shortUrl))callback;
 
+#if TARGET_OS_IOS
+/**
+ *  获取延时链接
+ */
++ (NSString *)getDeferredLink;
+#endif
 
 /**
  *  唤醒事件
@@ -431,5 +440,24 @@ typedef NS_ENUM(NSUInteger, TalkingDataGender) {
  */
 + (void)removeGlobalKV:(NSString *)key;
 
+#if TARGET_OS_IOS
+/**
+ *  灵动分析扫码唤起接口
+ *  @param  url             唤起灵动的url
+ */
++ (BOOL)handleUrl:(NSURL *)url;
+
+/**
+ *  hybrid初始化的时候 绑定wkwebview
+ *  @param  wkwebview       支持灵动事件的wkwebview
+ */
++ (void)bindWKWebView:(WKWebView *)wkwebview;
+
+/**
+ *  hybrid完成加载的时候，load一下hybrid灵动的配置。
+ *  @param  wkwebview       支持灵动事件的webView
+ */
++ (void)loadWKWebViewConfig:(WKWebView *)wkwebview;
+#endif
 
 @end

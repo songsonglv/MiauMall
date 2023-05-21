@@ -100,7 +100,7 @@ static NSMutableURLRequest *request;
     KweakSelf(self);
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer.timeoutInterval = 40;
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"multipart/form-data", @"application/json", @"text/html", @"image/jpeg", @"image/png", @"application/octet-stream", @"text/json",@"application/x-www-form-urlencoded", nil];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects: @"application/json", @"text/html", @"image/jpeg", @"image/png", @"application/octet-stream", @"text/json",@"application/x-www-form-urlencoded", nil];
 //    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     
@@ -370,16 +370,19 @@ return [NSDictionary dictionaryWithDictionary:(NSDictionary *)jsonObj];
     [manager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
         switch (status) {
             case AFNetworkReachabilityStatusUnknown:
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"networkConnect" object:nil];
                 break;
             case AFNetworkReachabilityStatusNotReachable:
                 NSLog(@"没有网络");
-                [ZTProgressHUD showMessage:@"没有网络，请检查网络连接"];
+//                [ZTProgressHUD showMessage:@"没有网络，请检查网络连接"];
                 break;
             case AFNetworkReachabilityStatusReachableViaWWAN:
                 NSLog(@"3G");
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"networkConnect1" object:nil];
                 break;
             case AFNetworkReachabilityStatusReachableViaWiFi:
                 NSLog(@"WIFI");
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"networkConnect" object:nil];
                 break;
                 
             default:
@@ -431,52 +434,52 @@ return [NSDictionary dictionaryWithDictionary:(NSDictionary *)jsonObj];
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager.requestSerializer setHTTPShouldHandleCookies:NO];
     
-    manager.requestSerializer.timeoutInterval = 20;
+    manager.requestSerializer.timeoutInterval = 40;
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"multipart/form-data", @"application/json", @"text/html", @"image/jpeg", @"image/png", @"application/octet-stream", @"text/json", nil];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     
     ///自定义http header 此处可省略
-    NSUserDefaults *userDefaulst = [NSUserDefaults standardUserDefaults];
-    NSString *authorization;
-    NSString *userId;
-    NSString *deviceToken;
-    NSString *deviceID;
-    authorization = [userDefaulst valueForKey:@"authorization"];
-    if ([authorization isEqualToString:@""] || authorization == nil || [authorization  isEqual: @""]) {
-        [manager.requestSerializer setValue:@"" forHTTPHeaderField:@"authorization"];
-    }else{
-        [manager.requestSerializer setValue:authorization forHTTPHeaderField:@"authorization"];
-    }
-    
-    userId = [userDefaulst valueForKey:@"userId"];
-    if ([userId isEqualToString:@""] || userId == nil || [userId  isEqual: @""]) {
-        [manager.requestSerializer setValue:@""forHTTPHeaderField:@"userId"];
-    }else{
-        [manager.requestSerializer setValue:userId forHTTPHeaderField:@"userId"];
-    }
-    
-    deviceToken = [userDefaulst valueForKey:@"deviceToken"];
-       if ([deviceToken isEqualToString:@""] || deviceToken == nil || [deviceToken  isEqual: @""]) {
-           [manager.requestSerializer setValue:@"" forHTTPHeaderField:@"deviceToken"];
-       }else{
-           [manager.requestSerializer setValue:deviceToken forHTTPHeaderField:@"deviceToken"];
-       }
-    
-    deviceID = [userDefaulst valueForKey:@"deviceID"];
-    if ([deviceID isEqualToString:@""] || deviceID == nil || [deviceID  isEqual: @""]) {
-        [manager.requestSerializer setValue:@"" forHTTPHeaderField:@"deviceId"];
-    }else{
-        [manager.requestSerializer setValue:deviceID forHTTPHeaderField:@"deviceId"];
-    }
-    
-    
-    
-    [manager.requestSerializer setValue:[TCDeviceName getDeviceName] forHTTPHeaderField:@"productModel"];
-    [manager.requestSerializer setValue:@"ios"forHTTPHeaderField:@"device"];
-    [manager.requestSerializer setValue:@"3.0.00"forHTTPHeaderField:@"appVersion"];
-    [manager.requestSerializer setValue:@"APPLE" forHTTPHeaderField:@"brand"];
-    [manager.requestSerializer setValue:@"app"forHTTPHeaderField:@"source"];
-    [manager.requestSerializer setValue:@"antRebate" forHTTPHeaderField:@"channel"];
+//    NSUserDefaults *userDefaulst = [NSUserDefaults standardUserDefaults];
+//    NSString *authorization;
+//    NSString *userId;
+//    NSString *deviceToken;
+//    NSString *deviceID;
+//    authorization = [userDefaulst valueForKey:@"authorization"];
+//    if ([authorization isEqualToString:@""] || authorization == nil || [authorization  isEqual: @""]) {
+//        [manager.requestSerializer setValue:@"" forHTTPHeaderField:@"authorization"];
+//    }else{
+//        [manager.requestSerializer setValue:authorization forHTTPHeaderField:@"authorization"];
+//    }
+//
+//    userId = [userDefaulst valueForKey:@"userId"];
+//    if ([userId isEqualToString:@""] || userId == nil || [userId  isEqual: @""]) {
+//        [manager.requestSerializer setValue:@""forHTTPHeaderField:@"userId"];
+//    }else{
+//        [manager.requestSerializer setValue:userId forHTTPHeaderField:@"userId"];
+//    }
+//
+//    deviceToken = [userDefaulst valueForKey:@"deviceToken"];
+//       if ([deviceToken isEqualToString:@""] || deviceToken == nil || [deviceToken  isEqual: @""]) {
+//           [manager.requestSerializer setValue:@"" forHTTPHeaderField:@"deviceToken"];
+//       }else{
+//           [manager.requestSerializer setValue:deviceToken forHTTPHeaderField:@"deviceToken"];
+//       }
+//
+//    deviceID = [userDefaulst valueForKey:@"deviceID"];
+//    if ([deviceID isEqualToString:@""] || deviceID == nil || [deviceID  isEqual: @""]) {
+//        [manager.requestSerializer setValue:@"" forHTTPHeaderField:@"deviceId"];
+//    }else{
+//        [manager.requestSerializer setValue:deviceID forHTTPHeaderField:@"deviceId"];
+//    }
+//
+//
+//
+//    [manager.requestSerializer setValue:[TCDeviceName getDeviceName] forHTTPHeaderField:@"productModel"];
+//    [manager.requestSerializer setValue:@"ios"forHTTPHeaderField:@"device"];
+//    [manager.requestSerializer setValue:@"3.0.00"forHTTPHeaderField:@"appVersion"];
+//    [manager.requestSerializer setValue:@"APPLE" forHTTPHeaderField:@"brand"];
+//    [manager.requestSerializer setValue:@"app"forHTTPHeaderField:@"source"];
+//    [manager.requestSerializer setValue:@"antRebate" forHTTPHeaderField:@"channel"];
 
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];//放弃解析
     

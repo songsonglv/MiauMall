@@ -32,7 +32,7 @@
 
 -(void)setUI{
     UIImageView *bgImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, -10, WIDTH, HEIGHT + 10)];
-    bgImage.image = [UIImage imageNamed:@"login_bg"];
+    [bgImage sd_setImageWithURL:[NSURL URLWithString:@"https://app.miau2020.com/down/appview/login.jpg"] placeholderImage:[UIImage imageNamed:@"login_bg"]];
     bgImage.userInteractionEnabled = YES;
     [self.view addSubview:bgImage];
     
@@ -41,14 +41,14 @@
     [returnBt addTarget:self action:@selector(clickBack) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:returnBt];
     
-    UILabel *lab1 = [UILabel publicLab:@"重新设置密码" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
+    UILabel *lab1 = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"pwdReset"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
     lab1.frame = CGRectMake(0, StatusBarHeight + 122, WIDTH, 26);
     [bgImage addSubview:lab1];
     
     UIView *infoView = [[UIView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(lab1.frame) + 30, WIDTH, 120)];
     [bgImage addSubview:infoView];
     
-    NSArray *arr = @[@"请输入新密码",@"请输入确认密码"];
+    NSArray *arr = @[[UserDefaultLocationDic valueForKey:@"inputNewPwd"],[UserDefaultLocationDic valueForKey:@"inputAgainPwd"]];
     for (int i = 0; i < 2; i++) {
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 60 * i, WIDTH, 60)];
         [infoView addSubview:view];
@@ -57,9 +57,9 @@
         line.backgroundColor = TCUIColorFromRGB(0xffffff);
         [view addSubview:line];
         
-        UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(35, 22, 150, 16)];
+        UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(35, 22, 180, 16)];
         [field setSecureTextEntry:YES];
-        field.placeholder = arr[i];
+        field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:arr[i] attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
         field.delegate = self;
         field.keyboardType = UIKeyboardTypeDefault;
         field.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
@@ -83,7 +83,7 @@
             [rightBt addTarget:self action:@selector(changeEye2:) forControlEvents:(UIControlEventTouchUpInside)];
         }
     }
-    UILabel *tipsLa = [UILabel publicLab:@"6-20位数字、字母、标点符号（至少2种）" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:12 numberOfLines:0];
+    UILabel *tipsLa = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"pwdRange"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:12 numberOfLines:0];
     tipsLa.frame = CGRectMake(36, CGRectGetMaxY(lab1.frame) + 170, WIDTH - 72, 12);
     [bgImage addSubview:tipsLa];
     
@@ -94,7 +94,7 @@
     [sureBt setBackgroundColor:TCUIColorFromRGB(0xffffff)];
     sureBt.userInteractionEnabled = NO;
     sureBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:16];
-    [sureBt setTitle:@"保存密码" forState:(UIControlStateNormal)];
+    [sureBt setTitle:[UserDefaultLocationDic valueForKey:@"isave"] forState:(UIControlStateNormal)];
     [sureBt setTitleColor:TCUIColorFromRGB(0x626261) forState:(UIControlStateNormal)];
     [sureBt addTarget:self action:@selector(clickSave) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:sureBt];
@@ -127,7 +127,7 @@
     if([self.pwdFied.text isEqualToString:self.againField.text]){
         [self requestSave];
       }else{
-        [ZTProgressHUD showMessage: @"两次密码输入不一致，请检查后重新输入"];
+        [ZTProgressHUD showMessage: [UserDefaultLocationDic valueForKey:@"erroPwd"]];
     }
 }
 
@@ -138,7 +138,7 @@
         NSLog(@"%@",jsonDic);
         NSString *code = [NSString stringWithFormat:@"%@",jsonDic[@"code"]];
         if([code isEqualToString:@"1"]){
-            [ZTProgressHUD showMessage:@"密码设置成功"];
+            [ZTProgressHUD showMessage:[UserDefaultLocationDic valueForKey:@"setSuccess"]];
             [self.presentingViewController.presentingViewController dismissViewControllerAnimated:NO completion:nil];
         }else{
             [ZTProgressHUD showMessage:jsonDic[@"msg"]];
@@ -169,6 +169,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    [ZTProgressHUD hide];
     [TalkingDataSDK onPageEnd:@"重新设置密码页面"];
 }
 @end

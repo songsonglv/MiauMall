@@ -30,6 +30,7 @@
 @property (nonatomic, strong) UITextField *emailField;//邮箱输入框
 @property (nonatomic, strong) UITextField *ecodeField;//邮箱验证码输入框
 @property (nonatomic, strong) UIButton *getCodeBt2;//获取邮箱验证码
+@property (nonatomic, strong) NSUserDefaults *userDefaults;
 
 
 @end
@@ -45,14 +46,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isPhone = @"1";
-    
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
     [self setUI];
     // Do any additional setup after loading the view.
 }
 
 -(void)setUI{
     UIImageView *bgImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, -10, WIDTH, HEIGHT + 10)];
-    bgImage.image = [UIImage imageNamed:@"login_bg"];
+    [bgImage sd_setImageWithURL:[NSURL URLWithString:@"https://app.miau2020.com/down/appview/login.jpg"] placeholderImage:[UIImage imageNamed:@"login_bg"]];
     bgImage.userInteractionEnabled = YES;
     [self.view addSubview:bgImage];
     
@@ -61,15 +62,17 @@
     [returnBt addTarget:self action:@selector(clickBack) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:returnBt];
     
-    UIButton *rightBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 74, StatusBarHeight + 16, 74, 16)];
+    CGSize size = [NSString sizeWithText:[UserDefaultLocationDic valueForKey:@"emailRegist"] font:[UIFont fontWithName:@"PingFangSC-Regular" size:16] maxSize:CGSizeMake(MAXFLOAT,16)];
+    
+    UIButton *rightBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 200, StatusBarHeight + 16, 180, 16)];
 //    [rightBt setBackgroundColor:UIColor.blueColor];
-    [rightBt setTitle:@"邮箱注册" forState:(UIControlStateNormal)];
+    [rightBt setTitle:[UserDefaultLocationDic valueForKey:@"emailRegist"] forState:(UIControlStateNormal)];
     [rightBt setTitleColor:TCUIColorFromRGB(0xffffff) forState:(UIControlStateNormal)];
     rightBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16];
     [rightBt addTarget:self action:@selector(changeMethod:) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:rightBt];
     
-    UILabel *lab1 = [UILabel publicLab:@"手机账号注册" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
+    UILabel *lab1 = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"phoneRegist"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Medium" size:26 numberOfLines:0];
     lab1.frame = CGRectMake(0, StatusBarHeight + 121, WIDTH, 26);
     [bgImage addSubview:lab1];
     self.titleLa = lab1;
@@ -87,7 +90,9 @@
         [view addSubview:line];
         
         if(i == 0){
-            UILabel *codeLa = [UILabel publicLab:@"+86" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
+            NSString *code = [self.userDefaults valueForKey:@"areaCode"];
+            NSString *str = [NSString stringWithFormat:@"+%@",code];
+            UILabel *codeLa = [UILabel publicLab:str textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
             codeLa.frame = CGRectMake(24, 23, 52, 14);
             [view addSubview:codeLa];
             self.areaCodeLa = codeLa;
@@ -102,7 +107,7 @@
             
             UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(CGRectGetMaxX(downImage.frame) + 40, 22, 180, 16)];
 //            field.placeholder = @"";
-            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:@"请输入联系电话" attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
+            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:[UserDefaultLocationDic valueForKey:@"inputPhone"] attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
             field.keyboardType = UIKeyboardTypeNumberPad;
             field.delegate = self;
             field.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
@@ -115,7 +120,7 @@
             self.phoneField = field;
         }else{
             UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(35, 22, 120, 16)];
-            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:@"验证码" attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
+            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:[UserDefaultLocationDic valueForKey:@"verifyCode"] attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
             field.keyboardType = UIKeyboardTypeNumberPad;
             field.delegate = self;
             field.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
@@ -127,13 +132,16 @@
             [view addSubview:field];
             self.codeField = field;
             
-            UIButton *getCodeBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 134, 11, 110, 38)];
+            
+            CGSize size0 = [NSString sizeWithText:[UserDefaultLocationDic valueForKey:@"getCode"] font:[UIFont fontWithName:@"PingFangSC-Regular" size:14] maxSize:CGSizeMake(MAXFLOAT,14)];
+            
+            UIButton *getCodeBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 180 - 20, 11, 180, 38)];
             getCodeBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
             getCodeBt.layer.masksToBounds = YES;
             getCodeBt.layer.cornerRadius = 19;
             getCodeBt.layer.borderColor = TCUIColorFromRGB(0xffffff).CGColor;
             getCodeBt.layer.borderWidth = 1;
-            [getCodeBt setTitle:@"获取验证码" forState:(UIControlStateNormal)];
+            [getCodeBt setTitle:[UserDefaultLocationDic valueForKey:@"getCode"] forState:(UIControlStateNormal)];
             [getCodeBt addTarget:self action:@selector(clickGetCode1:) forControlEvents:(UIControlEventTouchUpInside)];
             [getCodeBt setTitleColor:TCUIColorFromRGB(0xffffff) forState:(UIControlStateNormal)];
             [view addSubview:getCodeBt];
@@ -155,12 +163,12 @@
         [view addSubview:line];
         
         if(i == 0){
-            UILabel *codeLa = [UILabel publicLab:@"邮箱" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
+            UILabel *codeLa = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"imailbox"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
             codeLa.frame = CGRectMake(24, 23, 52, 14);
             [view addSubview:codeLa];
             
             UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(130, 22, 180, 16)];
-            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:@"请输入电子邮箱" attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
+            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:[UserDefaultLocationDic valueForKey:@"inputEmail"] attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
             field.keyboardType = UIKeyboardTypeDefault;
             field.delegate = self;
             field.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
@@ -173,7 +181,7 @@
             self.emailField = field;
         }else{
             UITextField *field = [[UITextField alloc]initWithFrame:CGRectMake(35, 22, 120, 16)];
-            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:@"验证码" attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
+            field.attributedPlaceholder = [[NSAttributedString alloc]initWithString:[UserDefaultLocationDic valueForKey:@"verifyCode"] attributes:@{NSForegroundColorAttributeName:TCUIColorFromRGB(0xeeeeee)}];
             field.keyboardType = UIKeyboardTypeNumberPad;
             field.delegate = self;
             field.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
@@ -185,13 +193,15 @@
             [view addSubview:field];
             self.ecodeField = field;
             
-            UIButton *getCodeBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 134, 11, 110, 38)];
+            
+            CGSize size1 = [NSString sizeWithText:[UserDefaultLocationDic valueForKey:@"getCode"] font:[UIFont fontWithName:@"PingFangSC-Regular" size:14] maxSize:CGSizeMake(MAXFLOAT,14)];
+            UIButton *getCodeBt = [[UIButton alloc]initWithFrame:CGRectMake(WIDTH - 180 - 20, 11, 180, 38)];
             getCodeBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
             getCodeBt.layer.masksToBounds = YES;
             getCodeBt.layer.cornerRadius = 19;
             getCodeBt.layer.borderColor = TCUIColorFromRGB(0xffffff).CGColor;
             getCodeBt.layer.borderWidth = 1;
-            [getCodeBt setTitle:@"获取验证码" forState:(UIControlStateNormal)];
+            [getCodeBt setTitle:[UserDefaultLocationDic valueForKey:@"getCode"] forState:(UIControlStateNormal)];
             [getCodeBt addTarget:self action:@selector(clickGetCode2:) forControlEvents:(UIControlEventTouchUpInside)];
             [getCodeBt setTitleColor:TCUIColorFromRGB(0xffffff) forState:(UIControlStateNormal)];
             [view addSubview:getCodeBt];
@@ -208,7 +218,7 @@
     [registBt setBackgroundColor:TCUIColorFromRGB(0xffffff)];
     registBt.userInteractionEnabled = NO;
     registBt.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:16];
-    [registBt setTitle:@"确定" forState:(UIControlStateNormal)];
+    [registBt setTitle:[UserDefaultLocationDic valueForKey:@"idetermine"] forState:(UIControlStateNormal)];
     [registBt setTitleColor:TCUIColorFromRGB(0x626261) forState:(UIControlStateNormal)];
     [registBt addTarget:self action:@selector(clickRegist) forControlEvents:(UIControlEventTouchUpInside)];
     [bgImage addSubview:registBt];
@@ -228,14 +238,16 @@
 - (void)reduceTime:(NSTimer *)coderTimer{
     timeCount--;
     if (timeCount == 0) {
-        [self.getCodeBt1 setTitle:@"重新获取" forState:UIControlStateNormal];
+        [self.getCodeBt1 setTitle:[UserDefaultLocationDic valueForKey:@"reacquire"] forState:UIControlStateNormal];
         self.getCodeBt1.userInteractionEnabled = YES;
         [self.getCodeBt1 addTarget:self action:@selector(clickGetCode1:) forControlEvents:(UIControlEventTouchUpInside)];
         //停止定时器
         [timer invalidate];
     }else{
-        NSString *str = [NSString stringWithFormat:@"   %lus重新获取", (long)timeCount];
-        [self.getCodeBt1 setTitle:str forState:UIControlStateNormal];
+        NSString *str = [NSString stringWithFormat:@"%lu",(long)timeCount];
+        NSString *str1 = [UserDefaultLocationDic valueForKey:@"xReacquire"];
+        NSString *codestr = [str1 stringByReplacingOccurrencesOfString:@"X" withString:str];
+        [self.getCodeBt1 setTitle:codestr forState:UIControlStateNormal];
         self.getCodeBt1.userInteractionEnabled = NO;
     }
 }
@@ -249,7 +261,7 @@
         sender.titleLabel.textAlignment = NSTextAlignmentRight;
         timer1 = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(reduceTime1:) userInfo:nil repeats:YES];
     }else{
-        [ZTProgressHUD showMessage:@"请输入正确的邮箱地址"];
+        [ZTProgressHUD showMessage:[UserDefaultLocationDic valueForKey:@"inputConMail"]];
     }
     
 }
@@ -258,14 +270,16 @@
 - (void)reduceTime1:(NSTimer *)coderTimer{
     timeCount1--;
     if (timeCount1 == 0) {
-        [self.getCodeBt2 setTitle:@"重新获取" forState:UIControlStateNormal];
+        [self.getCodeBt2 setTitle:[UserDefaultLocationDic valueForKey:@"reacquire"] forState:UIControlStateNormal];
         self.getCodeBt2.userInteractionEnabled = YES;
         [self.getCodeBt2 addTarget:self action:@selector(clickGetCode2:) forControlEvents:(UIControlEventTouchUpInside)];
         //停止定时器
         [timer1 invalidate];
     }else{
-        NSString *str = [NSString stringWithFormat:@"   %lus重新获取", (long)timeCount1];
-        [self.getCodeBt2 setTitle:str forState:UIControlStateNormal];
+        NSString *str = [NSString stringWithFormat:@"%lu",(long)timeCount1];
+        NSString *str1 = [UserDefaultLocationDic valueForKey:@"xReacquire"];
+        NSString *codestr = [str1 stringByReplacingOccurrencesOfString:@"X" withString:str];
+        [self.getCodeBt2 setTitle:codestr forState:UIControlStateNormal];
         self.getCodeBt2.userInteractionEnabled = NO;
     }
 }
@@ -301,7 +315,7 @@
     [ZTNetworking FormPostRequestUrl:url RequestPatams:param ssuccess:^(NSString *jsonStr, NSDictionary *jsonDic) {
         NSString *code = [NSString stringWithFormat:@"%@",jsonDic[@"code"]];
         if([code isEqualToString:@"1"]){
-            [ZTProgressHUD showMessage:@"验证码已发送"];
+            [ZTProgressHUD showMessage:[UserDefaultLocationDic valueForKey:@"yzmSon"]];
         }else{
             [ZTProgressHUD showMessage:jsonDic[@"msg"]];
         }
@@ -348,11 +362,12 @@
     KweakSelf(self);
     NSDictionary *param;
     if([self.isPhone isEqualToString:@"1"]){
-        param = @{@"t":@"CheckCode",@"AccountName":self.phoneField.text,@"VerifyCode":self.codeField.text,@"Currency":@"0",@"AreaCode":@"86",@"type":@"1",@"lang":@"0",@"cry":@"9"};
+        param = @{@"AccountName":self.phoneField.text,@"VerifyCode":self.codeField.text,@"Currency":@"0",@"AreaCode":@"86",@"type":@"1",@"lang":@"0",@"cry":@"9"};
     }else{
-        param = @{@"t":@"CheckCode",@"AccountName":self.emailField.text,@"VerifyCode":self.ecodeField.text,@"Currency":@"0",@"AreaCode":@"86",@"type":@"1",@"lang":@"0",@"cry":@"9"};
+        param = @{@"AccountName":self.emailField.text,@"VerifyCode":self.ecodeField.text,@"Currency":@"0",@"AreaCode":@"86",@"type":@"1",@"lang":@"0",@"cry":@"9"};
     }
-    [ZTNetworking FormPostRequestUrl:@BaseUrl RequestPatams:param ssuccess:^(NSString *jsonStr, NSDictionary *jsonDic) {
+    NSString *url = [NSString stringWithFormat:@"%s?t=%@",baseurl,@"CheckCode"];
+    [ZTNetworking FormPostRequestUrl:url RequestPatams:param ssuccess:^(NSString *jsonStr, NSDictionary *jsonDic) {
             NSString *code = [NSString stringWithFormat:@"%@",jsonDic[@"code"]];
             if([code isEqualToString:@"1"]){
                 MMRegistTwoVC *twoVC = [[MMRegistTwoVC alloc]init];
@@ -382,18 +397,18 @@
 }
 
 -(void)changeMethod:(UIButton *)sender{
-    if([sender.titleLabel.text isEqualToString:@"邮箱注册"]){
-        [sender setTitle:@"手机注册" forState:(UIControlStateNormal)];
+    if([sender.titleLabel.text isEqualToString:[UserDefaultLocationDic valueForKey:@"emailRegist"]]){
+        [sender setTitle:[UserDefaultLocationDic valueForKey:@"phoneRegist"] forState:(UIControlStateNormal)];
         self.isPhone = @"0";
         self.phoneView.hidden = YES;
         self.emailView.hidden = NO;
-        self.titleLa.text = @"邮箱账号注册";
+        self.titleLa.text =[UserDefaultLocationDic valueForKey:@"emailRegist"];
     }else{
-        [sender setTitle:@"邮箱注册" forState:(UIControlStateNormal)];
+        [sender setTitle:[UserDefaultLocationDic valueForKey:@"emailRegist"] forState:(UIControlStateNormal)];
         self.isPhone = @"1";
         self.phoneView.hidden = NO;
         self.emailView.hidden = YES;
-        self.titleLa.text = @"手机账号注册";
+        self.titleLa.text = [UserDefaultLocationDic valueForKey:@"phoneRegist"];
     }
 }
 
@@ -404,6 +419,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    [ZTProgressHUD hide];
     [TalkingDataSDK onPageEnd:@"注册第一步页面"];
 }
 

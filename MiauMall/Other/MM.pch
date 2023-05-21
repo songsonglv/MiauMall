@@ -21,6 +21,7 @@
                  
 #define BaseUrl1 "https://miaumall2022.azurewebsites.net/unishop/Face.ashx"
 #define baseurl "https://www.app.miau2020.com/unishop/Face.ashx"
+#define baseurl1 "https://www.app.miau2020.com/Purchasing/"
 //"https://miaumall2022.azurewebsites.net/unishop/Face.ashx"
 //http://api.miaujp.com:6002/unishop/Face.ashx
 //线上 https://app.miau2020.com/unishop/Face.ashx
@@ -32,16 +33,48 @@
 //"https://aitpay.cn/antrebateapp/" //测试服
 
 #define APPID "1562454331"
-#define TALKINGAPPID "D525C71020C3410DA54AC37CC50C5D73"//统计sdkid
+#define TALKINGAPPID "CE5360F87D05442183D75B2CB240B974"//统计sdkid
+#define TALKINGDataSchema "talkingdata.ce5360f87d05442183d75b2cb240b974" //talkingdata schema
+//腾讯云推送 境外
 #define TPAccessID "1620010648" //腾讯云accessid
 #define TPAccessKey "INXBF6P9TYWY"
 #define TPSecretKey "993436e0b052820cca4bdc80b28b1398"
 
+#define TPLicenseURL "https://license.vod2.myqcloud.com/license/v2/1306115634_1/v_cube.license"
+#define TPLicenseKey "8959261e715ca0f90331472768898291"
+
+
+
+#define WXAppid "wx0ee23c892314f6f0" //wx2217bee98612a32d 小程序 wx0ee23c892314f6f0 移动端
+#define WXSecret "6df3471347a21247c68a175bb926b3ff"
+#define ALIPayAPPScheme "com.miau2020.apk"
+
+#define GoogleAppId "331442012709-1j16s996je2lhvc1ibeps062qcr8s9oi.apps.googleusercontent.com"
+#define GoogleToken "com.googleusercontent.apps.331442012709-1j16s996je2lhvc1ibeps062qcr8s9oi"
+#define FBAppID "753816059390757"
+#define FBToken "fd8d3503d42f47fec0c87391710bb24e"
+
+#define LineChannelID "1660764018"
+#define LineChannelSecret "c3d6532dfeb6bc06a0d28d607ae01910"
+
+#define BuylyID "a18f6aac4f"
+#define BuglyAppKey "492eed61-8c28-4e3c-af8f-80a9e9c9cece"
+
+
 // Include any system framework and library headers here that should be included in all compilation units.
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 //读取多国语言
-#define LocalizedString(key)  [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"appLanguage"]] ofType:@"lproj"]] localizedStringForKey:(key) value:nil table:@"Language"]
+//#define LocalizedString(key)  [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"appLanguage"]] ofType:@"lproj"]] localizedStringForKey:(key) value:nil table:@"Language"]
 
+
+#define MMLocalozedString(x) \
+({\
+NSString *resultStr = [[MMLocalTranslation sharedManager] ttObjectForKey:x];\
+(resultStr);\
+})\
+
+#define UserDefaultLocationDic [[NSUserDefaults standardUserDefaults]objectForKey:@"LocalTranslation"]
+#define locationString(x) [UserDefaultLocationDic valueForKey:x];
 
 //Color
 #define TCUIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue &0xFF00) >>8))/255.0 blue:((float)(rgbValue &0xFF))/255.0 alpha:1.0]
@@ -56,6 +89,8 @@
 #define redColor1 TCUIColorFromRGB(0xe72423)
 //红色2
 #define redColor2 TCUIColorFromRGB(0xe13925)
+//红色3
+#define redColor3 TCUIColorFromRGB(0xf1506a)
 
 //绿色1
 #define greenColor1 TCUIColorFromRGB(0x5dbf03)
@@ -67,6 +102,9 @@
 #define textBlackColor3 TCUIColorFromRGB(0x231815)
 //分割线
 #define lineColor TCUIColorFromRGB(0xeef0f1)
+
+#define lineColor2 TCUIColorFromRGB(0xe3e3e3)
+
 
 //默认灰色
 #define normalColor TCUIColorFromRGB(0x6a6a6a6)

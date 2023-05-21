@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MMBaseViewController : UIViewController
 @property (nonatomic, strong) NSDictionary *param;
 @property (nonatomic, strong) UITabBarItem *cartabBarItem;
+@property (nonatomic, strong) UITabBarItem *minetabBarItem;
+@property (nonatomic, strong) NSDictionary *localTranslationDic;
 @end
 
 NS_ASSUME_NONNULL_END

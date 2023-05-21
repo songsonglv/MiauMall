@@ -99,7 +99,7 @@
     topV.layer.cornerRadius = 17.5;
     [self.view addSubview:topV];
     
-    UILabel *lab = [UILabel publicLab:@"发货日历" textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-SemiBold" size:21 numberOfLines:0];
+    UILabel *lab = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"shipCalendar"] textColor:TCUIColorFromRGB(0xffffff) textAlignment:(NSTextAlignmentCenter) fontWithName:@"PingFangSC-SemiBold" size:21 numberOfLines:0];
     lab.frame = CGRectMake(0, 27, WIDTH, 21);
     [topV addSubview:lab];
     UIButton *btn = [[UIButton alloc]init];
@@ -145,7 +145,7 @@
     [monthView addSubview:view1];
     self.view1 = view1;
     
-    UILabel *lab1 = [UILabel publicLab:@"预计发货时间" textColor:TCUIColorFromRGB(0x3d3d3d) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
+    UILabel *lab1 = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"yjSendTime"] textColor:TCUIColorFromRGB(0x3d3d3d) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
     lab1.preferredMaxLayoutWidth = WIDTH - 60;
     [lab1 setContentHuggingPriority:(UILayoutPriorityRequired) forAxis:(UILayoutConstraintAxisHorizontal)];
     [monthView addSubview:lab1];
@@ -164,7 +164,7 @@
     [monthView addSubview:view2];
     self.view2 = view2;
     
-    UILabel *lab2 = [UILabel publicLab:@"日本周末节假日，无法揽件" textColor:TCUIColorFromRGB(0x3d3d3d) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
+    UILabel *lab2 = [UILabel publicLab:[UserDefaultLocationDic valueForKey:@"jpHoliday"] textColor:TCUIColorFromRGB(0x3d3d3d) textAlignment:(NSTextAlignmentLeft) fontWithName:@"PingFangSC-Regular" size:14 numberOfLines:0];
     lab2.preferredMaxLayoutWidth = WIDTH - 60;
     [lab2 setContentHuggingPriority:(UILayoutPriorityRequired) forAxis:(UILayoutConstraintAxisHorizontal)];
     [monthView addSubview:lab2];

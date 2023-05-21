@@ -7,6 +7,7 @@
 
 #import "MMBaseWebViewVC.h"
 #import "MMComplaintCustomerServiceVC.h"
+#import "MMPaySuccessVC.h"
 
 @interface MMBaseWebViewVC ()<WKUIDelegate,WKNavigationDelegate>
 
@@ -78,12 +79,28 @@
     NSString *urlStr = requestURL.absoluteString;
     self.loadUrlStr = urlStr;
     if([urlStr isEqualToString:@"http://tousu.miaumall.net/"]){
-        if([self.naView.titleLa.text isEqualToString:@"客服"]){
+        if([self.naView.titleLa.text isEqualToString:[UserDefaultLocationDic valueForKey:@"customerService"]]){
             MMComplaintCustomerServiceVC *complainCustomVC = [[MMComplaintCustomerServiceVC alloc]init];
             complainCustomVC.loadUrlStr = urlStr;
             [self.navigationController pushViewController:complainCustomVC animated:YES];
         }
         
+    }else if ([urlStr containsString:@"http://miaumall.com/orderCheck?id="]){
+        MMPaySuccessVC *successVC = [[MMPaySuccessVC alloc]init];
+        successVC.ID = self.orderID;
+        if([self.isEnter isEqualToString:@"1"]){
+            successVC.isEnter = self.isEnter;
+        }
+        [self.navigationController pushViewController:successVC animated:YES];
+        [TalkingDataSDK onEvent:@"iOS原生-paypal支付成功" parameters:nil];
+    }else if ([urlStr containsString:@"https://www.app.miau2020.com/Payment/StripeCardPaySuccessReturnUrl"]){
+        MMPaySuccessVC *successVC = [[MMPaySuccessVC alloc]init];
+        successVC.ID = self.orderID;
+        if([self.isEnter isEqualToString:@"1"]){
+            successVC.isEnter = self.isEnter;
+        }
+        [self.navigationController pushViewController:successVC animated:YES];
+        [TalkingDataSDK onEvent:@"iOS原生-信用卡支付成功" parameters:nil];
     }else{
         [self RouteJump:urlStr];
     }
@@ -104,7 +121,12 @@
 }
 
 -(void)returnBack{
-    [self.navigationController popViewControllerAnimated:YES];
+    if([self.isEnter1 isEqualToString:@"1"]){
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+   
 }
 
 @end

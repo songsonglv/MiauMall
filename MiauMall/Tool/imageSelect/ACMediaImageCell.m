@@ -55,6 +55,10 @@
         _icon.frame = CGRectMake(0, 0, 81,81);
     }else if ([self.isComment isEqualToString:@"3"]){
         _icon.frame = CGRectMake(0, 0, 92,92);
+    }else if ([self.isComment isEqualToString:@"4"]){
+        _icon.frame = CGRectMake(0, 0, 75, 75);
+    }else if ([self.isComment isEqualToString:@"5"]){
+        _icon.frame = CGRectMake(0, 0, 92, 92);
     }
 
 }
